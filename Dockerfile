@@ -24,7 +24,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Install Node dependencies and build CSS/JS
-RUN npm ci && npm run build
+RUN npm install && npm run build
 
 # Verify the build output exists
 RUN ls -la public/build/ && cat public/build/manifest.json
