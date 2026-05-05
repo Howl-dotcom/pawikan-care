@@ -7,26 +7,16 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js 20
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
+# Copy all files (including pre-built public/build assets)
 COPY . .
 
-# Install PHP dependencies
+# Install PHP dependencies only (skip npm build - use committed assets)
 RUN composer install --no-dev --optimize-autoloader
-
-# Install Node dependencies and build CSS/JS
-RUN npm install && npm run build
-
-# Show build output for debugging
-RUN echo "=== Build output ===" && ls -la public/build/ && echo "=== Manifest ===" && cat public/build/manifest.json
 
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
