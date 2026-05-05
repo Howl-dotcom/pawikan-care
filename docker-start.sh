@@ -30,13 +30,23 @@ SMS_API_TOKEN="${SMS_API_TOKEN}"
 SMS_SENDER_ID="${SMS_SENDER_ID}"
 ENVEOF
 
-echo ".env written. Running setup..."
+echo ".env written. Clearing caches..."
 php artisan config:clear
 php artisan cache:clear
+
+echo "Dropping all tables for clean migration..."
+php artisan db:wipe --force || echo "db:wipe failed, continuing..."
+
+echo "Running migrations..."
+php artisan migrate --force
+
+echo "Seeding database..."
+php artisan db:seed --class=UserSeeder --force
+
+echo "Caching config/routes/views..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-php artisan migrate:fresh --force
-php artisan db:seed --class=UserSeeder --force
-echo "Starting server..."
+
+echo "Starting server on port ${PORT:-10000}..."
 php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
