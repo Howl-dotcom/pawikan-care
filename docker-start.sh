@@ -38,10 +38,7 @@ php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
-# Wipe and migrate fresh
-php artisan db:wipe --force
 php artisan migrate --force
-php artisan db:seed --class=UserSeeder --force
 
 # Rebuild caches
 php artisan config:cache
