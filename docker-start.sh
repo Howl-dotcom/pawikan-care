@@ -23,27 +23,27 @@ CACHE_STORE="${CACHE_STORE:-file}"
 QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
 
 LOG_CHANNEL="${LOG_CHANNEL:-stderr}"
-LOG_LEVEL="${LOG_LEVEL:-error}"
+LOG_LEVEL="${LOG_LEVEL:-debug}"
 
 SMS_GATEWAY_URL="${SMS_GATEWAY_URL}"
 SMS_API_TOKEN="${SMS_API_TOKEN}"
 SMS_SENDER_ID="${SMS_SENDER_ID}"
 ENVEOF
 
-echo ".env written. Clearing caches..."
+echo ".env written."
+
+# Clear ALL caches
 php artisan config:clear
 php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 
-echo "Dropping all tables for clean migration..."
-php artisan db:wipe --force || echo "db:wipe failed, continuing..."
-
-echo "Running migrations..."
+# Wipe and migrate fresh
+php artisan db:wipe --force
 php artisan migrate --force
-
-echo "Seeding database..."
 php artisan db:seed --class=UserSeeder --force
 
-echo "Caching config/routes/views..."
+# Rebuild caches
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
