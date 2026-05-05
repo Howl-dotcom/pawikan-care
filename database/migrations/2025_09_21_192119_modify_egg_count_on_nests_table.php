@@ -6,23 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up()
-{
-    Schema::table('nests', function (Blueprint $table) {
-        $table->integer('egg_count')->nullable(false)->change();
-    });
-}
+    public function up(): void
+    {
+        // egg_count already exists in create_nests_table migration
+        // This migration is a no-op to satisfy migration history
+        if (Schema::hasColumn('nests', 'egg_count')) {
+            return;
+        }
 
-    /**
-     * Reverse the migrations.
-     */
+        Schema::table('nests', function (Blueprint $table) {
+            $table->integer('egg_count')->nullable();
+        });
+    }
+
     public function down(): void
     {
-        Schema::table('nests', function (Blueprint $table) {
-            //
-        });
+        // nothing to reverse
     }
 };
