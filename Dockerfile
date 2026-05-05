@@ -17,7 +17,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy all files
 COPY . .
 
 # Install PHP dependencies
@@ -26,12 +25,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Install Node dependencies and build CSS/JS
 RUN npm install && npm run build
 
-# Move manifest to where Laravel expects it
-RUN if [ -f public/build/.vite/manifest.json ]; then \
-    cp public/build/.vite/manifest.json public/build/manifest.json; \
-    echo "Manifest copied successfully"; \
-    cat public/build/manifest.json; \
-fi
+# Show build output for debugging
+RUN echo "=== Build output ===" && ls -la public/build/ && echo "=== Manifest ===" && cat public/build/manifest.json
 
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
