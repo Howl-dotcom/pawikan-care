@@ -26,8 +26,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Install Node dependencies and build CSS/JS
 RUN npm install && npm run build
 
-# Verify the build output exists
-RUN ls -la public/build/ && cat public/build/manifest.json
+# Move manifest to where Laravel expects it
+RUN if [ -f public/build/.vite/manifest.json ]; then \
+    cp public/build/.vite/manifest.json public/build/manifest.json; \
+    echo "Manifest copied successfully"; \
+    cat public/build/manifest.json; \
+fi
 
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
