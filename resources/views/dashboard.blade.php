@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PawikanCare</title>
+  <link rel="stylesheet" href="{{ secure_asset('css/style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Leaflet -->
