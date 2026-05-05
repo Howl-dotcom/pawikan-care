@@ -10,28 +10,17 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /var/www
 
-# Copy project files
 COPY . .
 
-# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-
-# Install Node dependencies and build assets
 RUN npm install && npm run build
-
-# Set permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-# Expose port
+COPY docker-start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 10000
 
-# Start Laravel
-CMD php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    php artisan migrate --force && \
-    php artisan db:seed --class=UserSeeder --force && \
-    php artisan serve --host=0.0.0.0 --port=10000
+CMD ["/start.sh"]
